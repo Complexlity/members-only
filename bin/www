@@ -3,7 +3,7 @@
 /**
  * Module dependencies.
  */
-
+require("dotenv").config();
 let app = require("../app");
 let debug = require("debug")("members-only:server");
 let http = require("http");
@@ -83,4 +83,5 @@ function onListening() {
   let addr = server.address();
   let bind = typeof addr === "string" ? "pipe " + addr : "port " + addr.port;
   debug("Listening on " + bind);
+  console.log(`Server is now listening at http://localhost:${port} `);
 }
