@@ -1,5 +1,9 @@
 <%- include('header') %>
 <h1>Welcome To <%= title %></h1>
 <p>You will not regret being here</p>
-
+<form action="/message" method="post">
+  <h1>Enter Your Message</h1>
+  <label for="title"><input type="text" name="mtitle" id="title" placeholder="Message Title"></label>
+  <label for="message"><input type="text" name="message" id="message" placeholder="Enter the Message"></label>
+</form>
 <%- include('footer') %>
