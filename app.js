@@ -4,11 +4,20 @@ let express = require("express");
 let path = require("path");
 let cookieParser = require("cookie-parser");
 let logger = require("morgan");
+let livereload = require("livereload");
+let connectLiveReload = require("connect-livereload");
 
 let indexRouter = require("./routes/index");
 
 let app = express();
+const liveReloadServer = livereload.createServer();
+liveReloadServer.server.once("connection", () => {
+  setTimeout(() => {
+    liveReloadServer.refresh("/");
+  }, 100);
+});
 
+app.use(connectLiveReload());
 // view engine setup
 app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "ejs");

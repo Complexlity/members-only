@@ -6,4 +6,9 @@
   <label for="title"><input type="text" name="mtitle" id="title" placeholder="Message Title"></label>
   <label for="message"><input type="text" name="message" id="message" placeholder="Enter the Message"></label>
 </form>
+
+
+<h2>Messages</h2 <% messages.forEach(message => { %> <h3><strong><%= message.title %></strong></h3>
+<p><%= message.body %></p>
+<% }) %>
 <%- include('footer') %>

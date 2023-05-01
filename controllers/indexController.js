@@ -1,5 +1,8 @@
+const Message = require("../models/messageSchema");
+
 exports.index = function (req, res, next) {
-  res.render("index", { title: "Complex Club" });
+  const messages = [];
+  res.render("index", { title: "Complex Club", messages });
 };
 
 exports.join_get = (req, res, next) => {
