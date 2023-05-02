@@ -2,6 +2,10 @@ let express = require("express");
 let router = express.Router();
 let indexController = require("../controllers/indexController");
 
+router.use((req, res, next) => {
+  res.locals.currentUser = req.user;
+  next();
+});
 /* GET home page. */
 router.get("/join", indexController.join_get);
 

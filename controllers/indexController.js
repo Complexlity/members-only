@@ -1,10 +1,15 @@
 const Message = require("../models/messageSchema");
 const User = require("../models/userSchema");
 const bcrypt = require("bcryptjs");
+require("../auth");
 
 exports.index = function (req, res, next) {
   const messages = [];
-  res.render("index", { title: "Complex Club", messages });
+  res.render("index", {
+    title: "Complex Club",
+    messages,
+    user: req.user || "",
+  });
 };
 
 exports.join_get = (req, res, next) => {
@@ -20,7 +25,11 @@ exports.login_get = (req, res, next) => {
 };
 
 exports.login_post = (req, res, next) => {
-  res.json({ title: "Login Post" });
+  passport.authenticate("local", {
+    successRedirect: "/",
+    failureRedirect: "/",
+    failureFlash: true,
+  })(req, res, next);
 };
 
 exports.signup_get = (req, res, next) => {
@@ -33,8 +42,6 @@ exports.signup_post = async (req, res, next) => {
 
   bcrypt.hash(password, 10, async (err, hashedPassword) => {
     if (err) {
-      console.log("I errored 1");
-
       return next(err);
     } else {
       console.log({ hashedPassword });
@@ -46,11 +53,8 @@ exports.signup_post = async (req, res, next) => {
         });
         const result = await user.save();
         console.log("User saved");
-
         res.redirect("/");
       } catch (error) {
-        console.log("I errored 2");
-
         return next(err);
       }
     }
