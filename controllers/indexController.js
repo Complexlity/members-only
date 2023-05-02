@@ -62,5 +62,19 @@ exports.signup_post = async (req, res, next) => {
 };
 
 exports.message_post = (req, res, next) => {
+  console.log(req.body);
+
+  const messageTitle = req.body.title;
+  const message = req.body.message;
+  console.log({ messageTitle, message });
+  console.log(user);
+
   res.json({ title: "Message Post" });
+};
+
+exports.logout_get = (req, res, next) => {
+  req.logout(function (err) {
+    if (err) return next(err);
+    res.redirect("/");
+  });
 };

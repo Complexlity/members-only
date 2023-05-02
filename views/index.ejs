@@ -2,15 +2,16 @@
 <h1>Welcome To <%= title %></h1>
 <% if (user) { %>
 <p>Hi <%= user.username %> we are glad to have you here</p>
-<% } else {%>
-<p>You will not regret being here</p>
-<% } %>
 <form action="/message" method="post">
   <h1>Enter Your Message</h1>
-  <label for="title"><input type="text" name="mtitle" id="title" placeholder="Message Title"></label>
+  <label for="title"><input type="text" name="title" id="title" placeholder="Message Title"></label>
   <label for="message"><input type="text" name="message" id="message" placeholder="Enter the Message"></label>
   <button>Submit</button>
 </form>
+
+<% } else {%>
+<p>You will not regret being here</p>
+<% } %>
 
 
 <h2>Messages</h2 <% messages.forEach(message => { %> <h3><strong><%= message.title %></strong></h3>

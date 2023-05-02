@@ -13,6 +13,7 @@ const connectLiveReload = require("connect-livereload");
 const session = require("express-session");
 const bcrypt = require("bcryptjs");
 require("./auth");
+const flash = require("connect-flash");
 
 let indexRouter = require("./routes/index");
 
@@ -35,7 +36,7 @@ app.set("view engine", "ejs");
 app.use(session({ secret: "cats", resave: false, saveUninitialized: true }));
 app.use(passport.initialize());
 app.use(passport.session());
-
+app.use(flash());
 // Middle wares
 app.use(logger("dev"));
 app.use(express.json());
