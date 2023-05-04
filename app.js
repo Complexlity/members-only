@@ -13,7 +13,7 @@ const connectLiveReload = require("connect-livereload");
 const session = require("express-session");
 const bcrypt = require("bcryptjs");
 const passport = require("passport");
-const passportFunctions = require("./auth");
+const passportFunctions = require("./auth/passportLocal");
 const flash = require("connect-flash");
 
 let indexRouter = require("./routes/index");
