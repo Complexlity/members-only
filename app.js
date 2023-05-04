@@ -12,12 +12,15 @@ const connectLiveReload = require("connect-livereload");
 // Auth Imports
 const session = require("express-session");
 const bcrypt = require("bcryptjs");
-require("./auth");
+const passport = require("passport");
+const passportFunctions = require("./auth");
 const flash = require("connect-flash");
 
 let indexRouter = require("./routes/index");
 
 let app = express();
+// const mongoDB = process.env.MONGODB_CONNECTION_STRING;
+// mongoose.connect(mongoDB, { useUnifiedTopology: true, useNewUrlParser: true, })
 
 // Live Reload Setup
 const liveReloadServer = livereload.createServer();
@@ -33,6 +36,7 @@ app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "ejs");
 
 // Authentication functions
+passportFunctions.Setup();
 app.use(session({ secret: "cats", resave: false, saveUninitialized: true }));
 app.use(passport.initialize());
 app.use(passport.session());
@@ -43,19 +47,13 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "public")));
+
 app.use((req, res, next) => {
   res.locals.currentUser = req.user;
   next();
 });
-
 app.use("/", indexRouter);
-app.post(
-  "/login",
-  passport.authenticate("local", {
-    successRedirect: "/",
-    failureRedirect: "/",
-  })
-);
+
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
   next(createError(404));

@@ -1,7 +1,10 @@
 const Message = require("../models/messageSchema");
 const User = require("../models/userSchema");
 const bcrypt = require("bcryptjs");
-require("../auth");
+const passport = require("passport");
+const { body } = require("express-validator");
+
+function userValidate() {}
 
 exports.index = function (req, res, next) {
   const messages = [];
@@ -27,49 +30,57 @@ exports.login_get = (req, res, next) => {
 exports.login_post = (req, res, next) => {
   passport.authenticate("local", {
     successRedirect: "/",
-    failureRedirect: "/",
+    failureRedirect: "/signup",
     failureFlash: true,
   })(req, res, next);
 };
 
 exports.signup_get = (req, res, next) => {
-  res.render("signup", { title: "Create A New Account" });
+  res.render("signup", {
+    title: "Create A New Account",
+    error: "",
+    username: "",
+  });
 };
 
 exports.signup_post = async (req, res, next) => {
+  const username = req.body.username;
   const password = req.body.password;
   console.log(password);
 
   bcrypt.hash(password, 10, async (err, hashedPassword) => {
     if (err) {
+      console.log("First Error");
+      console.log(err);
+
       return next(err);
     } else {
       console.log({ hashedPassword });
 
       try {
         const user = new User({
-          username: req.body.username,
+          username,
           password: hashedPassword,
         });
         const result = await user.save();
         console.log("User saved");
         res.redirect("/");
       } catch (error) {
-        return next(err);
+        if (error.code === 11000) {
+          return res.render("signup", {
+            title: "Sign Up",
+            error: "Username already taken. Please try another",
+            username,
+          });
+        }
+        return next(error);
       }
     }
   });
 };
 
 exports.message_post = (req, res, next) => {
-  console.log(req.body);
-
-  const messageTitle = req.body.title;
-  const message = req.body.message;
-  console.log({ messageTitle, message });
-  console.log(user);
-
-  res.json({ title: "Message Post" });
+  res.json({ currentUser: res.locals.currentUser });
 };
 
 exports.logout_get = (req, res, next) => {
