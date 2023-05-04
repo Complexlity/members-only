@@ -2,12 +2,34 @@ const Message = require("../models/messageSchema");
 const User = require("../models/userSchema");
 const bcrypt = require("bcryptjs");
 const passport = require("passport");
-const { body } = require("express-validator");
+const { body, validationResult } = require("express-validator");
+const dayjs = require("dayjs");
+const relativeTime = require("dayjs/plugin/relativeTime");
+dayjs.extend(relativeTime);
 
-function userValidate() {}
+function userValidate() {
+  return [
+    body("username").trim().notEmpty().withMessage("Username is required"),
+    body("password").trim().notEmpty().withMessage("Password is required"),
+  ];
+}
 
-exports.index = function (req, res, next) {
-  const messages = [];
+function formatDate(arr) {
+  arr.map((item) => {
+    item.formattedDate = dayjs(item.createdAt).fromNow();
+    return item;
+  });
+  return arr;
+}
+
+exports.index = async function (req, res, next) {
+  let messages = [];
+  try {
+    messages = await Message.find().sort({ createdAt: 1 });
+    formatDate(messages);
+  } catch (error) {
+    next(error);
+  }
   res.render("index", {
     title: "Complex Club",
     messages,
@@ -43,45 +65,66 @@ exports.signup_get = (req, res, next) => {
   });
 };
 
-exports.signup_post = async (req, res, next) => {
-  const username = req.body.username;
-  const password = req.body.password;
-  console.log(password);
+exports.signup_post = [
+  userValidate(),
+  async (req, res, next) => {
+    const username = req.body.username;
+    const password = req.body.password;
+    console.log(password);
 
-  bcrypt.hash(password, 10, async (err, hashedPassword) => {
-    if (err) {
-      console.log("First Error");
-      console.log(err);
+    bcrypt.hash(password, 10, async (err, hashedPassword) => {
+      if (err) {
+        return next(err);
+      } else {
+        console.log({ hashedPassword });
 
-      return next(err);
-    } else {
-      console.log({ hashedPassword });
-
-      try {
-        const user = new User({
-          username,
-          password: hashedPassword,
-        });
-        const result = await user.save();
-        console.log("User saved");
-        res.redirect("/");
-      } catch (error) {
-        if (error.code === 11000) {
-          return res.render("signup", {
-            title: "Sign Up",
-            error: "Username already taken. Please try another",
+        try {
+          const user = new User({
             username,
+            password: hashedPassword,
           });
+          const result = await user.save();
+          console.log("User saved");
+          res.redirect("/");
+        } catch (error) {
+          if (error.code === 11000) {
+            return res.render("signup", {
+              title: "Sign Up",
+              error: "Username already taken. Please try another",
+              username,
+            });
+          }
+          return next(error);
         }
-        return next(error);
       }
-    }
-  });
-};
+    });
+  },
+];
 
-exports.message_post = (req, res, next) => {
-  res.json({ currentUser: res.locals.currentUser });
-};
+exports.message_post = [
+  body("title", "Title must be less than 50 characters")
+    .trim()
+    .isLength({ max: 50 }),
+  body("message", "Message is required").trim().notEmpty(),
+  async (req, res, next) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      res.json({ errors: errors.array() });
+    }
+    console.log(req.user);
+
+    if (req.user) {
+      const message = new Message({
+        author: req.user.username,
+        title: req.body.title,
+        body: req.body.message,
+      });
+      await message.save();
+      return res.redirect("/");
+    }
+    return res.status(400).json({ message: "User not found" });
+  },
+];
 
 exports.logout_get = (req, res, next) => {
   req.logout(function (err) {
