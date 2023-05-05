@@ -14,7 +14,7 @@
     <ul>
       <li><a href="/">Home</a></li>
       <li><a href="/join">Join</a></li>
-      <% if (locals.user) { %>
+      <% if (locals.currentUser) { %>
       <li><a href="/logout">LogOut</a>
       </li>
       <% } else { %>

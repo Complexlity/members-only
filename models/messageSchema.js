@@ -10,17 +10,17 @@ const MessageSchema = new Schema(
     title: {
       type: String,
       required: true,
-      maxLength: 30,
+      maxLength: 50,
       minLength: 8,
     },
     body: {
       type: String,
       required: true,
-      maxLength: 50,
+      maxLength: 200,
       minLength: 10,
     },
   },
-  { timestamps: true }
+  { timestamps: true, sort: { createdAt: -1 } }
 );
 
 module.exports = mongoose.model("Message", MessageSchema);

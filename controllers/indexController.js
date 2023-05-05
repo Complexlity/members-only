@@ -25,7 +25,8 @@ function formatDate(arr) {
 exports.index = async function (req, res, next) {
   let messages = [];
   try {
-    messages = await Message.find().sort({ createdAt: 1 });
+    messages = await Message.find().sort({ createdAt: -1 });
+
     formatDate(messages);
   } catch (error) {
     next(error);
@@ -105,14 +106,18 @@ exports.signup_post = [
 exports.message_post = [
   body("title", "Title must be less than 50 characters")
     .trim()
-    .isLength({ max: 50 }),
-  body("message", "Message is required").trim().notEmpty(),
+    .isLength({ max: 50 })
+    .escape(),
+  body("message", "Message is required")
+    .notEmpty()
+    .trim()
+    .isLength({ max: 200 })
+    .escape(),
   async (req, res, next) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       res.json({ errors: errors.array() });
     }
-    console.log(req.user);
 
     if (req.user) {
       const message = new Message({
