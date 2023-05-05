@@ -14,11 +14,14 @@
 <% } %>
 
 
-<h2>Messages</h2 <% if (!locals.currentUser) { %> <blockquote>Note: Please login to be able to post messages and view message authors</blockquote>
+<h2>Messages</h2 <% if (!locals.currentUser) { %> <blockquote><i>Please <a href="/login">login</a> to be able to post messages </i></blockquote>
+<% } %>
+<% if (!locals.currentUser?.member) { %>
+<blockquote><i>Only club members can see message authors. <a href="/join">Join The Club</a></i></blockquote>
 <% } %> <% messages.forEach(message => { %> <h3><strong>
     <%= message.title %></strong></h3>
 <p><%= message.body %></p>
-<% if (locals.currentUser) { %>
+<% if (locals.currentUser?.member) { %>
 <p><i><%= message.author %> - <%= message.formattedDate %></i> </p>
 <% } else { %>
 <p><i>someonecool - sometimeago</i></p>

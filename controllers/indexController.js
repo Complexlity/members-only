@@ -23,6 +23,8 @@ function formatDate(arr) {
 }
 
 exports.index = async function (req, res, next) {
+  console.log(req.user?.member);
+
   let messages = [];
   try {
     messages = await Message.find().sort({ createdAt: -1 });
