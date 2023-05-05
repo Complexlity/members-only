@@ -2,7 +2,7 @@ let express = require("express");
 let router = express.Router();
 let indexController = require("../controllers/indexController");
 
-/* GET home page. */
+router.get("/code", indexController.code_get);
 router.get("/join", indexController.join_get);
 router.post("/join", indexController.join_post);
 router.get("/login", indexController.login_get);

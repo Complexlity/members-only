@@ -140,3 +140,16 @@ exports.logout_get = (req, res, next) => {
     res.redirect("/");
   });
 };
+
+exports.code_get = (req, res, next) => {
+  if (req.user) {
+    res.status(200).json({
+      SECRET_CODE: "complexlity is boss",
+    });
+  } else {
+    res.render("join", {
+      title: "Join The Club",
+      error: "please login to be able to join",
+    });
+  }
+};
