@@ -6,6 +6,7 @@ const { body, validationResult } = require("express-validator");
 const dayjs = require("dayjs");
 const relativeTime = require("dayjs/plugin/relativeTime");
 dayjs.extend(relativeTime);
+require("dotenv").config();
 
 function userValidate() {
   return [
@@ -23,8 +24,6 @@ function formatDate(arr) {
 }
 
 exports.index = async function (req, res, next) {
-  console.log(req.user?.member);
-
   let messages = [];
   try {
     messages = await Message.find().sort({ createdAt: -1 });
@@ -41,12 +40,45 @@ exports.index = async function (req, res, next) {
 };
 
 exports.join_get = (req, res, next) => {
-  res.render("join", { title: "Join The Club" });
+  res.render("join", { title: "Become A Member" });
 };
 
-exports.join_post = (req, res, next) => {
-  res.json({ title: "Join Post" });
-};
+exports.join_post = [
+  body("secret_code")
+    .notEmpty()
+    .trim()
+    .custom((value) => {
+      if (value === process.env.SECRET_CODE) {
+        return true;
+      } else {
+        throw new Error();
+      }
+    }),
+  async (req, res, next) => {
+    const errors = validationResult(req);
+    if (!req.user) {
+      return res.render("join", {
+        title: "Become A Member",
+        error: "please login to be able to join",
+        password: req.body.secret_code,
+      });
+    }
+
+    if (!errors.isEmpty()) {
+      return res.render("join", {
+        title: "Become A Member",
+        error: "Invalid code. Please get the code first",
+        password: req.body.secret_code,
+      });
+    }
+
+    const user = await User.findOne({ _id: req.user._id });
+    user.member = true;
+    user.save().then(() => {
+      return res.redirect("/");
+    });
+  },
+];
 
 exports.login_get = (req, res, next) => {
   res.render("login", { title: "Log In To Your Account" });
@@ -142,13 +174,14 @@ exports.logout_get = (req, res, next) => {
 };
 
 exports.code_get = (req, res, next) => {
+  const SECRET_CODE = process.env.SECRET_CODE;
   if (req.user) {
     res.status(200).json({
-      SECRET_CODE: "complexlity is boss",
+      SECRET_CODE,
     });
   } else {
     res.render("join", {
-      title: "Join The Club",
+      title: "Become A Member",
       error: "please login to be able to join",
     });
   }

@@ -16,7 +16,7 @@
 
 <h2>Messages</h2 <% if (!locals.currentUser) { %> <blockquote><i>Please <a href="/login">login</a> to be able to post messages </i></blockquote>
 <% } %>
-<% if (!locals.currentUser?.member) { %>
+<% if (locals.currentUser && !locals.currentUser.member) { %>
 <blockquote><i>Only club members can see message authors. <a href="/join">Join The Club</a></i></blockquote>
 <% } %> <% messages.forEach(message => { %> <h3><strong>
     <%= message.title %></strong></h3>

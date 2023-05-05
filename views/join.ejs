@@ -1,7 +1,7 @@
 <%- include('header') %>
 <form action="/join" method="post">
   <h1>Do You want to join us?</h1>
-  <input type="password" placeholder="Enter Security Code">
+  <input name=secret_code type="password" value="<%= locals.password || '' %>" placeholder="Enter Secret Code">
   <button>Join</button>
 </form>
 <p>Don't know the code? Get it <a href="/code">Here</a></p>
