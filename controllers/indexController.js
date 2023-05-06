@@ -121,7 +121,7 @@ exports.signup_post = [
           });
           const result = await user.save();
           console.log("User saved");
-          res.redirect("/");
+          res.redirect("/login");
         } catch (error) {
           if (error.code === 11000) {
             return res.render("signup", {
@@ -139,6 +139,7 @@ exports.signup_post = [
 
 exports.message_post = [
   body("title", "Title must be less than 50 characters")
+    .notEmpty()
     .trim()
     .isLength({ max: 50 })
     .escape(),

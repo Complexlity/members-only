@@ -4,8 +4,8 @@
 <p>Hi <b><%= user.username %></b>, we are glad to have you here<% if (locals.currentUser.member) { %> - <em> Club Member</em><% } %></p>
 <form action="/message" method="post">
   <h1>Enter Your Message</h1>
-  <label for="title"><input type="text" name="title" id="title" placeholder="Message Title"></label>
-  <label for="message"><input type="text" name="message" id="message" placeholder="Enter the Message"></label>
+  <label for="title"><input minlength="1" maxlength="50" type="text" name="title" id="title" placeholder="Message Title"></label>
+  <label for="message"><input type="text" minlength="1" maxlength="200" name="message" id="message" placeholder="Enter the Message"></label>
   <button>Submit</button>
 </form>
 

@@ -11,13 +11,13 @@ const MessageSchema = new Schema(
       type: String,
       required: true,
       maxLength: 50,
-      minLength: 8,
+      minLength: 1,
     },
     body: {
       type: String,
       required: true,
       maxLength: 200,
-      minLength: 10,
+      minLength: 1,
     },
   },
   { timestamps: true, sort: { createdAt: -1 } }
