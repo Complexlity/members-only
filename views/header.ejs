@@ -13,8 +13,10 @@
   <nav>
     <ul>
       <li><a href="/">Home</a></li>
-      <li><a href="/join">Join</a></li>
       <% if (locals.currentUser) { %>
+      <% if (!locals.currentUser.member) { %>
+      <li><a href="/join">Join Club</a></li>
+      <% } %>
       <li><a href="/logout">LogOut</a>
       </li>
       <% } else { %>
